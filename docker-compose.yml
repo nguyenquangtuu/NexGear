@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  # MySQL Database Service
+  mysql:
+    image: mysql:8.0
+    container_name: nexgear_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: nexgear_db
+      MYSQL_USER: nexgear_user
+      MYSQL_PASSWORD: nexgear_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - nexgear_network
+
+  # MongoDB Database Service
+  mongodb:
+    image: mongo:7.0
+    container_name: nexgear_mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - nexgear_network
+
+volumes:
+  mysql_data:
+    driver: local
+  mongodb_data:
+    driver: local
+
+networks:
+  nexgear_network:
+    driver: bridge
