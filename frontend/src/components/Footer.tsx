@@ -77,7 +77,7 @@ const Footer = () => {
 
           <div className="flex flex-col gap-4">
             <h3 className="type-title-sm text-foreground">Hỗ trợ khách hàng</h3>
-            <div className="flex flex-col gap-2">
+            <nav className="flex flex-col gap-2">
               <Link href="/terms" className="type-body-muted transition-colors hover:text-primary">
                 Điều khoản sử dụng
               </Link>
