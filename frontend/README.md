@@ -1,89 +1,81 @@
-# NexGear - Modern E-Commerce Platform
+# ⚡ NexGear - Modern Frontend Web Client
 
-NexGear là nền tảng thương mại điện tử hiện đại chuyên về Laptop & Thiết bị Công nghệ, được xây dựng với mục tiêu mang lại trải nghiệm mua sắm mượt mà, tốc độ cao và giao diện người dùng (UI) tinh tế. Dự án sử dụng các công nghệ mới nhất để đảm bảo hiệu suất tối ưu và khả năng mở rộng dễ dàng.
+Giao diện Web Client cho nền tảng thương mại điện tử **NexGear** (Laptop & Thiết bị công nghệ cao cấp), được xây dựng trên nền tảng **Next.js 16 (App Router)** và **React 19**, mang lại trải nghiệm mua sắm mượt mà, tốc độ tải trang vượt trội, giao diện người dùng (UI/UX) tinh tế và tối ưu chuẩn SEO.
 
-## 🚀 Công nghệ sử dụng
+---
 
-### Frontend Core
+## 🚀 Công nghệ Sử dụng
 
-- **Next.js 16 (App Router)**: Framework React mạnh mẽ nhất hiện nay với Server Components và Streaming.
-- **React 19**: Phiên bản mới nhất của React với nhiều cải tiến về hiệu suất.
-- **TypeScript**: Đảm bảo tính an toàn của mã nguồn và hỗ trợ phát triển nhanh chóng.
+* **Core Framework**: [Next.js 16](https://nextjs.org/) (App Router, Server Components, Streaming SSR).
+* **UI Library**: [React 19](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/).
+* **Styling**: [Tailwind CSS v4](https://tailwindcss.com/) (Modern CSS system, Responsive Design).
+* **Icons & Themes**: Lucide React, Next-themes (Hỗ trợ Dark/Light mode).
+* **Rich Text Editor**: [Tiptap Editor](https://tiptap.dev/) cho việc tạo nội dung Sản phẩm & Bài viết Blog.
+* **Realtime**: [Pusher JS](https://pusher.com/) cho Live Chat và Thông báo người dùng tức thì.
+* **Bảo mật & Tiện ích**: Cloudflare Turnstile CAPTCHA, React Hot Toast, ZXing Browser (Quét mã).
+* **SEO & Metadata**: Động theo từng trang, tự động sinh `sitemap.ts`, `robots.ts` và Schema Markup (JSON-LD).
 
-### Giao diện & Trải nghiệm (UI/UX)
+---
 
-- **Tailwind CSS v4**: Utility-first CSS framework cho việc thiết kế giao diện linh hoạt và hiện đại.
-- **Lucide React**: Bộ icon vector sắc nét và đa dạng.
-- **Next-themes**: Hỗ trợ chuyển đổi chế độ Sáng/Tối (Light/Dark mode) mượt mà.
-- **React Hot Toast**: Hệ thống thông báo đẹp mắt và trực quan.
-- **Google Fonts**: Sử dụng font _Inter_ và _Be Vietnam Pro_ tối ưu cho tiếng Việt.
+## ✨ Tính năng Chính
 
-### Tính năng nâng cao
+### 🛍️ 1. Giao diện Khách hàng (Storefront)
+* **Trang chủ sống động**: Hero Banners động, Khung giờ vàng Flash Sale đếm ngược, Danh sách sản phẩm mới về & đề xuất cá nhân hóa, Sản phẩm vừa xem gần đây.
+* **Tìm kiếm & Lọc nâng cao**: Lọc sản phẩm theo danh mục đa cấp, khoảng giá, thương hiệu; sắp xếp theo giá, đánh giá và độ phổ biến.
+* **Trang Chi tiết Sản phẩm**: Thư viện hình ảnh sắc nét, bảng thông số kỹ thuật, lựa chọn biến thể linh hoạt, form nhập liệu yêu cầu theo từng biến thể.
+* **Đánh giá Sản phẩm**: Đánh giá 1-5 sao và để lại nhận xét được kiểm duyệt bởi AI.
+* **Giỏ hàng & Đặt hàng**: Giỏ hàng realtime, mã giảm giá Coupon, chọn phương thức nhận hàng (Giao tận nơi / Nhận tại cửa hàng).
+* **Thanh toán Linh hoạt**: Nạp tiền & thanh toán bằng Ví NexGear, quét mã VietQR tự động qua PayOS, đối soát Sepay tức thì.
+* **Trung tâm Tài khoản**: Quản lý thông tin, ví tiền, lịch sử đơn hàng, quản lý bảo hành & gia hạn dịch vụ (**User Services**), danh sách yêu thích (**Wishlist**), trung tâm thông báo realtime.
+* **Hỗ trợ Trực tuyến**: Live Chat trực tiếp với Admin hoặc trò chuyện với **Trợ lý ảo AI CSKH (Google Gemini)** 24/7.
+* **Blog & Cẩm nang**: Bài viết công nghệ, tin khuyến mãi, các trang chính sách & hướng dẫn mua hàng.
 
-- **Pusher JS**: Xử lý dữ liệu thời gian thực (Real-time) cho Chat và Thông báo.
-- **Tiptap Editor**: Trình soạn thảo văn bản phong phú (Rich Text Editor) cho hệ thống Blog và quản trị nội dung.
-- **Cloudflare Turnstile**: Giải pháp bảo mật chống bot hiện đại và thân thiện với người dùng.
-- **SEO & Marketing**: Tích hợp Metadata động, JSON-LD (Schema.org), Sitemap và Robots.ts tự động.
+### ⚙️ 2. Giao diện Quản trị viên (Admin Dashboard - `/tp-admin`)
+* **Tổng quan (Dashboard)**: Biểu đồ doanh thu, tổng số đơn hàng, khách hàng mới, sản phẩm bán chạy.
+* **Quản lý Danh mục & Sản phẩm**: Thêm/Sửa/Xóa sản phẩm với trình soạn thảo Tiptap Rich Text, quản lý biến thể, giá vốn, giá bán, tồn kho.
+* **Quản lý Đơn hàng & Giao dịch**: Theo dõi và cập nhật trạng thái đơn hàng, mã vận đơn, quản lý lịch sử nạp tiền và giao dịch toàn sàn.
+* **Quản trị Người dùng**: Danh sách khách hàng, phân quyền Admin, điều chỉnh số dư ví khách hàng, khóa tài khoản vi phạm.
+* **Marketing & Truyền thông**: Quản lý Mã giảm giá (Coupons), cấu hình Banner Trang chủ, quản lý Blog & Tin tức, Gửi Email Marketing hàng loạt.
+* **Quản lý CSKH & AI**: Bảng điều khiển Live Chat đa phiên hội thoại, cấu hình Bot AI CSKH (System Prompt & Training Instructions).
+* **Cài đặt Hệ thống & SEO**: Cấu hình thông tin website, tài khoản ngân hàng nhận tiền, quản lý SEO Onpage.
 
-## ✨ Tính năng chính
+---
 
-### Người dùng (Customer)
+## 🛠 Hướng dẫn Cài đặt & Khởi chạy
 
-- **Hệ thống Mua sắm**: Tìm kiếm, lọc sản phẩm laptop/linh kiện, giỏ hàng và danh sách yêu thích (Wishlist).
-- **Xác thực đa nền tảng**: Hỗ trợ Đăng nhập bằng Google, Facebook và Zalo.
-- **Tài khoản cá nhân**: Quản lý thông tin profile, lịch sử đơn hàng và thông báo.
-- **Giao tiếp**: Chat trực tuyến thời gian thực với quản trị viên.
+### 1. Yêu cầu Hệ thống
+* Node.js 18.x trở lên
+* npm / yarn / pnpm
 
-### Quản trị (Admin Dashboard - `/tp-admin`)
-
-- **Quản lý Sản phẩm & Danh mục**: Thêm, sửa, xóa sản phẩm với trình soạn thảo Tiptap.
-- **Quản lý Đơn hàng & Giao dịch**: Theo dõi trạng thái đơn hàng và luồng tiền.
-- **Quản trị Người dùng**: Quản lý danh sách thành viên và phân quyền.
-- **Hệ thống Blog**: Đăng tải và quản lý bài viết tin tức.
-- **Cấu hình Hệ thống**: Cài đặt SEO, Banner, API Variables, và thông tin website.
-
-## 🛠 Hướng dẫn cài đặt
-
-Để chạy phần Frontend của NexGear ở môi trường local:
-
-### 1. Yêu cầu hệ thống
-
-- Node.js 18.x trở lên
-- npm hoặc yarn
-
-### 2. Cài đặt Dependencies
-
+### 2. Cài đặt Gói Phụ thuộc
 ```bash
-# Di chuyển vào thư mục frontend
 cd frontend
-
-# Cài đặt các gói phụ thuộc
 npm install
 ```
 
-### 3. Cấu hình biến môi trường
-
-Tạo file `.env` từ file mẫu `.env.example` và điền các thông tin cần thiết:
-
+### 3. Cấu hình Biến Môi trường
+Tạo file `.env` từ file mẫu `.env.example`:
 ```bash
 cp .env.example .env
 ```
 
-### 4. Chạy dự án
-
+### 4. Khởi chạy Ứng dụng
 ```bash
 # Chạy ở chế độ phát triển (Development)
 npm run dev
 
-# Xây dựng bản production
+# Xây dựng bản tối ưu cho Production
 npm run build
 
-# Chạy bản production
-npm start
+# Khởi chạy bản Production
+npm run start
+
+# Kiểm tra cú pháp mã nguồn
+npm run lint
 ```
 
-Mặc định, ứng dụng sẽ chạy tại địa chỉ: [http://localhost:3000](http://localhost:3000)
+Mặc định, ứng dụng chạy tại: `http://localhost:3000`
 
 ---
 
-Developed by **Nguyen Quang Tuu**.
+Developed for **NexGear Frontend**.

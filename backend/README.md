@@ -1,70 +1,75 @@
-# NexGear Backend API
+# ⚡ NexGear - Backend RESTful API Server
 
-Đây là hệ thống Backend API cho nền tảng thương mại điện tử **NexGear** (chuyên bán Laptop, Phụ kiện & Thiết bị công nghệ). Server được xây dựng trên nền tảng Node.js và Express, cung cấp các dịch vụ quản lý dữ liệu, xác thực, thanh toán và các tính năng thời gian thực.
+Hệ thống Backend RESTful API cho nền tảng thương mại điện tử **NexGear** (chuyên bán Laptop, Phụ kiện & Thiết bị công nghệ). Được xây dựng trên nền tảng **Node.js & Express**, kết hợp mô hình dữ liệu lai (**MySQL & MongoDB**), cung cấp các dịch vụ quản lý dữ liệu, xác thực đa phương thức, cổng thanh toán tự động, AI kiểm duyệt & tư vấn, và truyền tải thời gian thực.
 
-## 🚀 Công nghệ sử dụng
+---
 
-### Core Stack
-- **Node.js & Express**: Môi trường thực thi và Framework chính.
-- **MySQL (mysql2)**: Cơ sở dữ liệu quan hệ chính để quản lý Người dùng, Sản phẩm, Đơn hàng.
-- **MongoDB (Mongoose)**: Cơ sở dữ liệu NoSQL hỗ trợ lưu trữ dữ liệu linh hoạt.
-- **Passport.js**: Hệ thống xác thực mạnh mẽ hỗ trợ Google, Facebook, Zalo.
+## 🚀 Công nghệ Sử dụng
 
-### Dịch vụ tích hợp (Integrations)
-- **PayOS & Sepay**: Cổng thanh toán trực tuyến và đối soát ngân hàng tự động.
-- **Pusher**: Hệ thống truyền tải dữ liệu thời gian thực cho Chat và Thông báo.
-- **Nodemailer**: Dịch vụ gửi Email (OTP, Hóa đơn, Thông báo).
-- **OpenRouter**: Tích hợp AI hỗ trợ các tính năng thông minh.
-- **Zalo SDK**: Tương tác với hệ sinh thái Zalo và Zalo Bot.
+* **Core Framework**: Node.js & Express.js.
+* **Cơ sở Dữ liệu**:
+  * **MySQL (mysql2)**: Quản lý Người dùng, Phân quyền, Danh mục, Sản phẩm, Biến thể, Đơn hàng, Giao dịch ví, Mã giảm giá, Bài viết, Đánh giá.
+  * **MongoDB (Mongoose)**: Lưu trữ Nhật ký hoạt động (Logs), Lịch sử Live Chat, Thông báo thời gian thực, Cấu hình API động (ApiVariables), Cấu hình biến thể nhà cung cấp (ProductVariantApiConfig).
+* **Xác thực & Bảo mật**:
+  * Passport.js (Local Auth, Google, Facebook, Zalo, GitHub OAuth 2.0).
+  * Express-Session & Express-MySQL-Session lưu trữ phiên bảo mật.
+  * 2FA Email OTP qua Nodemailer.
+  * Helmet, CORS, Express Rate Limit, Bcryptjs, Cloudflare Turnstile Server Verification.
+* **Tích hợp Dịch vụ Ngoài (Integrations)**:
+  * **PayOS & Sepay Webhook**: Tự động tạo mã VietQR và đối soát ngân hàng tức thì 24/7.
+  * **Pusher**: Kênh Realtime cho Live Chat và Thông báo người dùng.
+  * **OpenRouter (Google Gemini 2.0 Flash)**: AI kiểm duyệt nội dung đánh giá và Bot AI tư vấn CSKH tự động.
+  * **Zalo Bot Platform**: Webhook tự động nhận & gửi thông báo đơn hàng/giao dịch qua Zalo.
 
-### Bảo mật (Security)
-- **Helmet**: Thiết lập các HTTP headers bảo mật.
-- **CORS**: Quản lý truy cập từ các domain được phép.
-- **Express Rate Limit**: Chống tấn công Brute-force và Spam.
-- **Bcryptjs**: Mã hóa mật khẩu người dùng.
-- **Cloudflare Turnstile**: Xác thực người dùng phía Server.
+---
 
-## ✨ Các tính năng chính
+## ✨ Các Tính năng Chính
 
-- **Quản lý Sản phẩm**: API CRUD cho Laptop, linh kiện, thuộc tính và tồn kho.
-- **Hệ thống Đơn hàng**: Xử lý quy trình đặt hàng, tính toán giá, áp dụng coupon và thanh toán.
-- **Xác thực & Phân quyền**: Đăng ký, đăng nhập (Local & Social), quản lý session và phân quyền Admin/User.
-- **Thanh toán tự động**: Tích hợp PayOS cho chuyển khoản ngân hàng và đối soát qua Sepay.
-- **Real-time Chat**: Hệ thống chat giữa người dùng và admin thông qua Pusher.
-- **Zalo Bot**: Tự động hóa các thông báo và tương tác qua Zalo.
-- **Hệ thống Email/OTP**: Gửi mã xác thực và thông báo giao dịch tự động.
+* **Xác thực & Phân quyền**: Đăng ký, đăng nhập Local & Social OAuth, 2FA OTP qua Email, quên mật khẩu an toàn, chống tấn công Brute-force (Login Throttle).
+* **Quản lý Danh mục & Sản phẩm**: CRUD danh mục đa cấp, sản phẩm đa biến thể (CPU/RAM/SSD/Bảo hành), kho số lượng/mã tự động (**Warehouse Items**).
+* **Kiểm tra Giá vốn Tự động (Price Check Service)**: Tự động kiểm tra giá nhà cung cấp và điều chỉnh giá bán theo biên lợi nhuận.
+* **Đơn hàng & Thanh toán**:
+  * Xử lý giỏ hàng, tính giá, áp dụng coupon giảm giá.
+  * Thanh toán bằng Số dư ví, PayOS VietQR, đối soát Sepay Webhook, Chuyển khoản ngân hàng.
+  * Tự động hủy đơn hàng quá hạn thanh toán (**Order Timeout Service**).
+* **Hậu mãi & Quản lý Dịch vụ (User Services)**: Theo dõi thời hạn bảo hành, kích hoạt gia hạn dịch vụ tự động.
+* **Đánh giá & AI Kiểm duyệt**: Hệ thống đánh giá 1-5 sao có AI rà soát ngôn từ thô tục, thư rác trước khi duyệt.
+* **Live Chat & Bot AI CSKH**: Chat thời gian thực với quản trị viên qua Pusher hoặc Bot AI tự động tư vấn 24/7 dựa trên thông tin sản phẩm và đơn hàng của khách.
+* **Zalo Bot & Email Marketing**: Tự động gửi thông báo qua Zalo và gửi email hàng loạt (Bulk Email).
+* **Quản trị Toàn diện (Admin APIs)**: Báo cáo doanh thu, quản lý người dùng, điều chỉnh số dư ví, banner, SEO, blog, nhật ký hoạt động.
 
-## 🛠 Hướng dẫn cài đặt
+---
 
-### 1. Yêu cầu hệ thống
-- Node.js 18.x trở lên
-- MySQL & MongoDB
+## 🛠 Hướng dẫn Cài đặt & Khởi chạy
 
-### 2. Cài đặt
+### 1. Yêu cầu Hệ thống
+* Node.js 18.x trở lên
+* MySQL 8.0 & MongoDB 7.0 (chạy cục bộ hoặc qua Docker)
+
+### 2. Cài đặt Gói Phụ thuộc
 ```bash
-# Di chuyển vào thư mục backend
 cd backend
-
-# Cài đặt các gói phụ thuộc
 npm install
 ```
 
-### 3. Cấu hình
-Tạo file `.env` từ file mẫu `.env.example` và điền đầy đủ các thông số kết nối Database và API Keys:
+### 3. Cấu hình Biến Môi trường
+Tạo file `.env` từ file mẫu `.env.example`:
 ```bash
 cp .env.example .env
 ```
+*Điền đầy đủ thông tin kết nối DB (MySQL, MongoDB) và các API Keys.*
 
-### 4. Chạy Server
+### 4. Khởi chạy Server
 ```bash
-# Chạy ở chế độ phát triển (với nodemon)
+# Chế độ phát triển (Tự động reload với nodemon)
 npm run dev
 
-# Chạy ở chế độ production
+# Chế độ Production
 npm start
 ```
 
-Mặc định, API sẽ chạy tại địa chỉ: [http://localhost:5000](http://localhost:5000)
+Mặc định, API Server sẽ lắng nghe tại: `http://localhost:5000/api`
 
 ---
-Developed by **NexGear Team**.
+
+Developed for **NexGear Backend**.
