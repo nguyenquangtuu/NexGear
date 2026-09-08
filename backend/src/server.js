@@ -51,6 +51,7 @@ function startOrderTimeoutCleanupJob() {
 }
 
 
+// Initialize application bootstrap and background services
 async function bootstrap() {
   try {
     await pool.query('SELECT 1');
