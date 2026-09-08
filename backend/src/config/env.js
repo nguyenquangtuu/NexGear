@@ -114,6 +114,12 @@ const env = {
     publicLink: process.env.ZALO_BOT_PUBLIC_LINK || '',
     linkCodeExpiresMinutes: Number(process.env.ZALO_BOT_LINK_CODE_EXPIRES_MINUTES || 10),
   },
+  payos: {
+    clientId: process.env.PAYOS_CLIENT_ID || '',
+    apiKey: process.env.PAYOS_API_KEY || '',
+    checksumKey: process.env.PAYOS_CHECKSUM_KEY || '',
+    apiBaseUrl: process.env.PAYOS_BASE_URL || 'https://api-merchant.payos.vn',
+  },
   sepay: {
     webhookApiKey: process.env.SEPAY_WEBHOOK_API_KEY || '',
     returnUrl: process.env.SEPAY_RETURN_URL || `${frontendOrigin.replace(/\/+$/, '')}/payment-result`,

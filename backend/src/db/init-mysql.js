@@ -18,12 +18,15 @@ async function initMysqlSchema() {
       og_title VARCHAR(255),
       og_description TEXT,
       og_image_url VARCHAR(500),
+      favicon_url VARCHAR(500) DEFAULT '/images/brand/favicon.png',
       contact_email VARCHAR(120),
       contact_phone VARCHAR(20),
       facebook_url VARCHAR(255),
       zalo_url VARCHAR(255),
       telegram_url VARCHAR(255),
       footer_html TEXT,
+      deposit_enabled TINYINT(1) DEFAULT 1,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
   `);
@@ -47,14 +50,72 @@ async function initMysqlSchema() {
     CREATE TABLE IF NOT EXISTS users (
       id BIGINT AUTO_INCREMENT PRIMARY KEY,
       email VARCHAR(255) NOT NULL UNIQUE,
-      password VARCHAR(255) NOT NULL,
+      password_hash VARCHAR(255) NULL,
       full_name VARCHAR(255) NOT NULL,
       role ENUM('USER', 'ADMIN') DEFAULT 'USER',
       balance DECIMAL(15,2) DEFAULT 0,
+      total_deposit DECIMAL(15,2) DEFAULT 0,
+      deposit_code VARCHAR(50) NULL UNIQUE,
+      is_email_verified TINYINT(1) DEFAULT 0,
       is_blocked TINYINT(1) DEFAULT 0,
+      block_reason TEXT NULL,
+      is_2fa_enabled TINYINT(1) DEFAULT 0,
+      two_factor_secret VARCHAR(255) NULL,
+      zalo_bot_chat_id VARCHAR(100) NULL,
+      zalo_bot_link_code VARCHAR(100) NULL,
+      zalo_bot_link_code_expires_at DATETIME NULL,
       last_login DATETIME,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `);
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS sessions (
+      session_id VARCHAR(128) NOT NULL PRIMARY KEY,
+      expires INT(11) UNSIGNED NOT NULL,
+      data MEDIUMTEXT,
+      INDEX idx_expires (expires)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `);
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS email_otps (
+      id BIGINT AUTO_INCREMENT PRIMARY KEY,
+      user_id BIGINT NOT NULL,
+      otp_code VARCHAR(10) NOT NULL,
+      expires_at DATETIME NOT NULL,
+      is_used TINYINT(1) DEFAULT 0,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+      INDEX idx_otp_user_code (user_id, otp_code)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `);
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS password_reset_tokens (
+      id BIGINT AUTO_INCREMENT PRIMARY KEY,
+      user_id BIGINT NOT NULL,
+      token_hash VARCHAR(255) NOT NULL,
+      expires_at DATETIME NOT NULL,
+      is_used TINYINT(1) DEFAULT 0,
+      used_at DATETIME NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+      INDEX idx_reset_token (token_hash)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `);
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS user_social_accounts (
+      id BIGINT AUTO_INCREMENT PRIMARY KEY,
+      user_id BIGINT NOT NULL,
+      provider VARCHAR(50) NOT NULL,
+      provider_id VARCHAR(255) NOT NULL,
+      email VARCHAR(255) NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+      UNIQUE KEY uq_provider_account (provider, provider_id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
   `);
 
@@ -427,6 +488,17 @@ async function initMysqlSchema() {
   } catch (err) {
     // Column might already be nullable or table doesn't exist yet
   }
+
+  // Migration: Ensure site_settings has required columns
+  try {
+    await pool.query("ALTER TABLE site_settings ADD COLUMN favicon_url VARCHAR(500) DEFAULT '/images/brand/favicon.png' AFTER og_image_url");
+  } catch (_e) {}
+  try {
+    await pool.query("ALTER TABLE site_settings ADD COLUMN deposit_enabled TINYINT(1) DEFAULT 1 AFTER footer_html");
+  } catch (_e) {}
+  try {
+    await pool.query("ALTER TABLE site_settings ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP AFTER deposit_enabled");
+  } catch (_e) {}
 
   console.log('Database schema initialized successfully.');
 }

@@ -5,18 +5,23 @@ const DEFAULT_SMTP_TIMEOUT_MS = 15000;
 const smtpTimeoutMs = Number(env.smtp.timeoutMs || DEFAULT_SMTP_TIMEOUT_MS);
 const BRAND_LOGO_URL = `${env.frontendOrigin.replace(/\/+$/, '')}/images/brand/logo-dark.png`;
 
-const transporter = nodemailer.createTransport({
+const transportOptions = {
   host: env.smtp.host,
   port: env.smtp.port,
   secure: env.smtp.secure,
-  auth: {
-    user: env.smtp.user,
-    pass: env.smtp.pass,
-  },
   connectionTimeout: smtpTimeoutMs,
   greetingTimeout: smtpTimeoutMs,
   socketTimeout: smtpTimeoutMs,
-});
+};
+
+if (env.smtp.user) {
+  transportOptions.auth = {
+    user: env.smtp.user,
+    pass: env.smtp.pass,
+  };
+}
+
+const transporter = nodemailer.createTransport(transportOptions);
 
 let smtpVerificationCache = {
   checkedAt: 0,
