@@ -252,3 +252,11 @@ npm run dev:frontend
 ---
 
 Developed for **NexGear E-Commerce Platform**.
+
+---
+
+## 👨‍💻 Thông tin Sinh viên Thực hiện
+* **Họ và tên**: Quốc Trung
+* **Email**: doquoctrung2k@gmail.com
+* **Môn học**: Mẫu thiết kế (Design Patterns)
+* **Thời gian cập nhật**: 08/09/2026
