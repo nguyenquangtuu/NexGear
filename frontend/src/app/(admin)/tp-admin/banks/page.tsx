@@ -74,7 +74,7 @@ export default function AdminBanksPage() {
       const rows = Array.isArray(response.data) ? response.data : [];
       setBanks(rows);
     } catch (error) {
-      toast.error(getErrorMessage(error, 'Không tải được danh sách ngân hàng'));
+      toast.error(getErrorMessage(error, 'Không tải được danh sách ngân hàng !'));
     } finally {
       setLoading(false);
     }
@@ -200,7 +200,7 @@ export default function AdminBanksPage() {
         toast.success('Đã tạo ngân hàng mới');
       }
     } catch (error) {
-      toast.error(getErrorMessage(error, 'Không lưu được ngân hàng'));
+      toast.error(getErrorMessage(error, 'Không lưu được ngân hàng !'));
     } finally {
       setSaving(false);
     }
