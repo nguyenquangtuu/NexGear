@@ -1,4 +1,4 @@
-# ⚡ NexGear - Nền tảng Thương mại Điện tử Laptop & Thiết bị Công nghệ
+# ⚡ NexGear - Nền tảng Thương mại Điện tử
 
 > **NexGear** là giải pháp sàn Thương mại Điện tử (E-Commerce) chuyên sâu cho Laptop, Phụ kiện & Thiết bị Công nghệ cao cấp. Dự án được xây dựng theo kiến trúc **Monorepo** hiện đại, kết hợp sức mạnh giữa **Next.js 16 (App Router)** và **Node.js / Express RESTful API**, tích hợp cơ chế đa cơ sở dữ liệu **MySQL & MongoDB**, thanh toán tự động, AI kiểm duyệt & tư vấn, cùng hệ thống Realtime thời gian thực.
 
@@ -6,7 +6,7 @@
 
 ## 🌟 Tính năng Nổi bật của Hệ thống
 
-### 🛒 1. Trải nghiệm Khách hàng (Storefront)
+### 🛒 1. Trải nghiệm Khách hàng
 * **Khám phá & Trang chủ thông minh**:
   * Dynamic Hero Banner tùy biến cao, hỗ trợ slide tự động và hiệu ứng overlay.
   * Khung giờ vàng Flash Sale (**Golden Hour Sale**) với đồng hồ đếm ngược trực quan.
@@ -46,7 +46,7 @@
 
 ---
 
-### ⚙️ 2. Hệ thống Quản trị Toàn diện (Admin Dashboard - `/tp-admin`)
+### ⚙️ 2. Hệ thống Quản trị Toàn diện
 * **Báo cáo & Thống kê (Analytics Dashboard)**:
   * Bảng điều khiển thời gian thực về Doanh thu, Tổng số đơn hàng, Khách hàng mới, Sản phẩm bán chạy.
   * Biểu đồ trực quan theo dõi tăng trưởng kinh doanh theo ngày, tuần, tháng.

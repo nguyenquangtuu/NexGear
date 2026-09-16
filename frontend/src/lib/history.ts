@@ -57,7 +57,6 @@ export const saveToHistory = (product: HistoryItem) => {
 
   try {
     const existingHistory = syncHistoryCache();
-    // Remove if already exists to move to top
     const filteredHistory = existingHistory.filter(item => item.id !== product.id);
     
     const newHistory = [product, ...filteredHistory].slice(0, MAX_HISTORY_ITEMS);
