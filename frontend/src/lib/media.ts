@@ -26,14 +26,12 @@ export function transformHtmlContent(html?: string | null) {
   
   let transformed = html;
 
-  // Replace absolute frontend paths first if they exist
   if (FRONTEND_URL && FRONTEND_URL !== BACKEND_URL) {
     const escapedFrontend = FRONTEND_URL.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const absoluteRegex = new RegExp(`(src|href)="${escapedFrontend}(\\/(?:api\\/)?uploads\\/[^"]+)"`, 'g');
     transformed = transformed.replace(absoluteRegex, (match, attr, path) => `${attr}="${BACKEND_URL}${path}"`);
   }
   
-  // Replace relative paths
   return transformed.replace(
     /(src|href)="(\/(?:api\/)?uploads\/[^"]+)"/g,
     (match, attr, path) => `${attr}="${BACKEND_URL}${path}"`

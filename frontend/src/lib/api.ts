@@ -7,7 +7,7 @@ export type ApiError = Error & {
   data?: unknown;
 };
 
-export function getErrorMessage(error: unknown, fallback = 'Có lỗi xảy ra') {
+export function getErrorMessage(error: unknown, fallback = 'Có lỗi') {
   if (error instanceof Error && error.message) {
     return error.message;
   }
@@ -38,7 +38,6 @@ async function ensureCsrfCookie() {
       cachedCsrfToken = data.token;
     }
   } catch {
-    // Ignore bootstrap failures; the original request will surface the real error.
   }
 }
 
