@@ -155,7 +155,7 @@ NexGear/
 │   ├── .env.example               # Mẫu cấu hình môi trường Frontend
 │   └── package.json               # Dependencies của Frontend
 │
-├── docker-compose.yml             # Khởi chạy nhanh MySQL 8.0 & MongoDB 7.0 bằng Docker
+├── docker-compose.yml             # Khởi chạy nhanh MySQL 8.0 & MongoDB 7 bằng Docker
 ├── package.json                   # Root package điều phối chạy đồng thời (Concurrently)
 └── README.md                      # Tài liệu tổng quan hệ thống NexGear
 ```
