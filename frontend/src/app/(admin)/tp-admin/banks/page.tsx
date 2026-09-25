@@ -1,5 +1,11 @@
 'use client';
 
+/**
+ * @file page.tsx (Admin Bank Accounts & VietQR Configuration)
+ * @description Administrative interface for managing bank deposit accounts, minimum transfer
+ * thresholds, VietQR payment templates, and live payment QR previews.
+ */
+
 import { useEffect, useMemo, useState } from 'react';
 import { Landmark, Plus, RefreshCcw, Save, Search, Trash2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
@@ -7,6 +13,9 @@ import { resolveMediaUrl } from '@/lib/media';
 
 import { apiFetch, getErrorMessage } from '@/lib/api';
 
+/**
+ * System bank account entity stored in database.
+ */
 type Bank = {
   id?: number;
   bank_name: string;
@@ -18,6 +27,9 @@ type Bank = {
   is_active: number | boolean;
 };
 
+/**
+ * Remote VietQR catalog bank entry from api.vietqr.io.
+ */
 type VietQrBank = {
   id: number;
   name: string;
@@ -26,8 +38,10 @@ type VietQrBank = {
   logo: string;
 };
 
+/** Default VietQR image generator URL template */
 const DEFAULT_QR_TEMPLATE = 'https://img.vietqr.io/image/{BANK_CODE}-{ACCOUNT_NUMBER}-print.png?amount=0&addInfo={CONTENT}&accountName={HOLDER}';
 
+/** Default blank bank model for form initialization */
 const EMPTY_BANK: Bank = {
   bank_name: '',
   short_name: '',
@@ -38,11 +52,24 @@ const EMPTY_BANK: Bank = {
   is_active: true,
 };
 
+/**
+ * Interpolates bank code and account number into VietQR standard template format.
+ *
+ * @param bankCode - Short bank identifier (e.g. "VCB", "MB").
+ * @param accountNumber - Beneficiary bank account number.
+ * @returns Parameterized QR image URL template.
+ */
 function buildQrTemplate(bankCode: string, accountNumber: string) {
   if (!bankCode || !accountNumber) return '';
   return DEFAULT_QR_TEMPLATE.replace('{BANK_CODE}', bankCode).replace('{ACCOUNT_NUMBER}', accountNumber);
 }
 
+/**
+ * Generates a mock preview QR image URL from form fields for visual verification.
+ *
+ * @param form - Currently active form data.
+ * @returns Renderable preview image source URL.
+ */
 function buildQrPreviewUrl(form: Bank) {
   if (!form.qr_template || !form.account_holder) return '';
   return form.qr_template
@@ -50,10 +77,20 @@ function buildQrPreviewUrl(form: Bank) {
     .replace('{HOLDER}', encodeURIComponent(form.account_holder));
 }
 
+/**
+ * Formats a numerical currency amount to Vietnamese Dong (VND) locale string.
+ *
+ * @param value - Currency integer or float.
+ * @returns Formatted string with 'đ' currency symbol.
+ */
 function formatVnd(value: number) {
   return `${Number(value || 0).toLocaleString('vi-VN')}đ`;
 }
 
+/**
+ * Administrator Bank Accounts Management Page Component.
+ * Supports CRUD operations, active status toggling, and VietQR catalog search.
+ */
 export default function AdminBanksPage() {
   const [banks, setBanks] = useState<Bank[]>([]);
   const [selectedId, setSelectedId] = useState<number | 'new'>('new');
@@ -67,6 +104,9 @@ export default function AdminBanksPage() {
   const [vietQrQuery, setVietQrQuery] = useState('');
   const [selectedVietQrCode, setSelectedVietQrCode] = useState('');
 
+  /**
+   * Fetches the current list of merchant bank accounts from backend API.
+   */
   const loadBanks = async () => {
     setLoading(true);
     try {
@@ -80,6 +120,9 @@ export default function AdminBanksPage() {
     }
   };
 
+  /**
+   * Loads supported Vietnamese banking institutions and shortcodes from VietQR open API.
+   */
   const loadVietQrBanks = async () => {
     setVietQrLoading(true);
     try {
@@ -164,6 +207,9 @@ export default function AdminBanksPage() {
 
   const qrPreviewUrl = useMemo(() => buildQrPreviewUrl(form), [form]);
 
+  /**
+   * Persists bank configurations by creating a new entry or updating an existing record.
+   */
   const saveBank = async () => {
     if (!form.bank_name.trim() || !form.short_name.trim() || !form.account_number.trim() || !form.account_holder.trim()) {
       toast.error('Vui lòng điền đủ ngân hàng, số tài khoản và chủ tài khoản');
@@ -206,6 +252,9 @@ export default function AdminBanksPage() {
     }
   };
 
+  /**
+   * Deletes the currently selected bank account after administrator confirmation.
+   */
   const deleteBank = async () => {
     if (!selectedBank?.id) return;
 
