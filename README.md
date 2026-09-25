@@ -4,7 +4,7 @@
 
 ---
 
-## 🌟 Tính năng Nổi bật của Hệ thống
+## 🌟 Tính năng Nổi bật của Hệ thống NEXTGEAR
 
 ### 🛒 1. Trải nghiệm Khách hàng
 * **Khám phá & Trang chủ thông minh**:
