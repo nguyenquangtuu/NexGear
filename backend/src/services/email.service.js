@@ -1,3 +1,12 @@
+/**
+ * @file email.service.js
+ * @description Email notification service utilizing Nodemailer with SMTP transport.
+ * Provides transactional email capabilities including OTP verification, password resets,
+ * and administrative broadcast announcements.
+ *
+ * Implements connection caching, timeout guards, and standardized error handling.
+ */
+
 const nodemailer = require('nodemailer');
 const env = require('../config/env');
 
@@ -28,6 +37,15 @@ let smtpVerificationCache = {
   ok: false,
 };
 
+/**
+ * Wraps a promise with an execution timeout guard.
+ *
+ * @template T
+ * @param {Promise<T>} promise - The target promise to monitor.
+ * @param {number} timeoutMs - Timeout threshold in milliseconds.
+ * @param {Function} errorFactory - Factory callback returning the error to reject with on timeout.
+ * @returns {Promise<T>}
+ */
 function withTimeout(promise, timeoutMs, errorFactory) {
   return Promise.race([
     promise,
@@ -41,6 +59,14 @@ function withTimeout(promise, timeoutMs, errorFactory) {
   ]);
 }
 
+/**
+ * Helper to construct an Error instance with a domain-specific error code and metadata.
+ *
+ * @param {string} message - Human-readable error description.
+ * @param {string} code - Domain error identifier (e.g., 'EMAIL_TIMEOUT', 'SMTP_AUTH_MISSING').
+ * @param {object} [meta={}] - Additional context attributes.
+ * @returns {Error}
+ */
 function createEmailError(message, code, meta = {}) {
   const error = new Error(message);
   error.code = code;
@@ -48,12 +74,25 @@ function createEmailError(message, code, meta = {}) {
   return error;
 }
 
+/**
+ * Builds a standardized mailto URI for the List-Unsubscribe header.
+ *
+ * @param {string} to - Recipient email address.
+ * @returns {string} Mailto unsubscribe link.
+ */
 function getUnsubscribeAddress(to) {
   const senderAddress = env.smtp.user || 'no-reply@nexgear.vn';
   const subject = encodeURIComponent(`unsubscribe:${String(to || '').trim()}`);
   return `mailto:${senderAddress}?subject=${subject}`;
 }
 
+/**
+ * Wraps dynamic HTML content inside the NexGear responsive branding email layout.
+ *
+ * @param {object} options - Layout configuration.
+ * @param {string} options.bodyHtml - Primary HTML body content.
+ * @returns {string} Fully styled HTML email string.
+ */
 function buildEmailLayout({ bodyHtml }) {
   return `
     <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #111827; max-width: 600px;">
@@ -71,6 +110,12 @@ function buildEmailLayout({ bodyHtml }) {
   `;
 }
 
+/**
+ * Escapes unsafe HTML characters to prevent XSS in email bodies.
+ *
+ * @param {string} value - Raw string to escape.
+ * @returns {string} Escaped string.
+ */
 function escapeHtml(value) {
   return String(value || '')
     .replace(/&/g, '&amp;')
@@ -80,6 +125,12 @@ function escapeHtml(value) {
     .replace(/'/g, '&#39;');
 }
 
+/**
+ * Masks an email address for privacy-safe logging and response representations.
+ *
+ * @param {string} email - Raw email address (e.g. "user@example.com").
+ * @returns {string} Masked representation (e.g. "u**r@example.com").
+ */
 function maskEmailAddress(email) {
   if (!email || !String(email).includes('@')) return '';
   const [local, domain] = String(email).split('@');
@@ -88,6 +139,11 @@ function maskEmailAddress(email) {
   return `${visible}@${domain}`;
 }
 
+/**
+ * Validates that all necessary SMTP transport configurations exist in environment variables.
+ *
+ * @returns {Error|null} Returns an Error object if configuration is deficient, or null if valid.
+ */
 function getTransportConfigError() {
   if (!env.smtp.host || !env.smtp.port) {
     return createEmailError('SMTP host or port is missing', 'SMTP_CONFIG_MISSING');
@@ -100,6 +156,12 @@ function getTransportConfigError() {
   return null;
 }
 
+/**
+ * Verifies SMTP connectivity with caching to prevent redundant socket handshakes.
+ *
+ * @param {boolean} [force=false] - When true, bypasses the 5-minute verification cache.
+ * @returns {Promise<{ok: boolean, cached: boolean}>}
+ */
 async function verifySmtpConnection(force = false) {
   const configError = getTransportConfigError();
   if (configError) {
@@ -125,6 +187,16 @@ async function verifySmtpConnection(force = false) {
   return { ok: true, cached: false };
 }
 
+/**
+ * Dispatches an email via configured SMTP transporter with validation and timeout management.
+ *
+ * @param {object} options - Mail dispatch options.
+ * @param {string} options.to - Destination email address.
+ * @param {string} options.subject - Email subject line.
+ * @param {string} options.html - Pre-rendered HTML content.
+ * @returns {Promise<{accepted: string[], rejected: string[], pending: string[], response: string, messageId: string, envelope: object, maskedTo: string}>}
+ * @throws {Error} Throws domain error if configuration is invalid, connection fails, or delivery is rejected.
+ */
 async function sendEmail({ to, subject, html }) {
   const configError = getTransportConfigError();
   if (configError) {
@@ -167,6 +239,13 @@ async function sendEmail({ to, subject, html }) {
   };
 }
 
+/**
+ * Sends a registration OTP verification code to a newly registered user.
+ *
+ * @param {string} toEmail - Recipient email.
+ * @param {string} otpCode - One-time numeric passcode.
+ * @returns {Promise<object>} Dispatch result from sendEmail.
+ */
 async function sendOtpEmail(toEmail, otpCode) {
   const html = buildEmailLayout({
     bodyHtml: `
@@ -185,6 +264,13 @@ async function sendOtpEmail(toEmail, otpCode) {
   });
 }
 
+/**
+ * Sends a password reset link to a user requesting account recovery.
+ *
+ * @param {string} toEmail - Recipient email.
+ * @param {string} resetUrl - Complete HTTPS reset URL containing secure token.
+ * @returns {Promise<object>} Dispatch result from sendEmail.
+ */
 async function sendPasswordResetEmail(toEmail, resetUrl) {
   const html = buildEmailLayout({
     bodyHtml: `
@@ -210,6 +296,16 @@ async function sendPasswordResetEmail(toEmail, resetUrl) {
   });
 }
 
+/**
+ * Sends an administrative announcement or marketing broadcast email.
+ *
+ * @param {object} params - Broadcast parameters.
+ * @param {string} params.toEmail - Recipient email address.
+ * @param {string} params.subject - Email subject.
+ * @param {string} params.content - Safe HTML body content.
+ * @param {string} [params.heading] - Optional title heading in email header.
+ * @returns {Promise<object>} Dispatch result.
+ */
 async function sendAdminBroadcastEmail({ toEmail, subject, content, heading }) {
   const safeHeading = escapeHtml(heading || subject || 'Thông báo từ NexGear');
 
@@ -227,6 +323,12 @@ async function sendAdminBroadcastEmail({ toEmail, subject, content, heading }) {
   });
 }
 
+/**
+ * Translates low-level SMTP errors and connection exceptions into user-friendly Vietnamese messages.
+ *
+ * @param {Error|object} error - The caught exception.
+ * @returns {string} Localized error message suitable for frontend display.
+ */
 function getEmailErrorMessage(error) {
   const rawMessage = String(error?.message || '').toLowerCase();
   const code = String(error?.code || '').toUpperCase();
@@ -263,6 +365,12 @@ function getEmailErrorMessage(error) {
   return 'Không thể gửi email lúc này. Vui lòng thử lại sau.';
 }
 
+/**
+ * Extracts structured metadata from an email dispatch failure for diagnostic logging.
+ *
+ * @param {Error|object} error - Caught exception.
+ * @returns {{code: string, message: string, response: string, command: string, rejected: string[]}}
+ */
 function getEmailErrorDetails(error) {
   return {
     code: String(error?.code || 'EMAIL_SEND_FAILED'),
