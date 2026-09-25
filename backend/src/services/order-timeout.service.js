@@ -1,12 +1,30 @@
+/**
+ * @file order-timeout.service.js
+ * @description Background service managing the automated lifecycle expiration for pending orders.
+ * Scans for unpaid orders exceeding the payment deadline, safely refunds reserved wallet balances,
+ * and updates order state with transactional consistency.
+ */
+
 const pool = require('../config/mysql');
 const env = require('../config/env');
 const { refundOrderAmountToBalance } = require('./order.service');
 
+/**
+ * Timeout window in seconds before a pending order is eligible for automated cancellation.
+ * @type {number}
+ */
 const PAYMENT_TIMEOUT_SECONDS = Math.max(
   60,
   Number(env.orders?.paymentTimeoutMinutes || 15) * 60
 );
 
+/**
+ * Constructs a structured audit metadata JSON string recording the timeout event details.
+ *
+ * @param {object} order - The order entity being cancelled.
+ * @param {number} elapsedSeconds - Duration elapsed since order creation.
+ * @returns {string} Serialized JSON metadata string.
+ */
 function buildTimeoutPaymentMeta(order, elapsedSeconds) {
   return JSON.stringify({
     source: 'TIMEOUT',
@@ -16,6 +34,14 @@ function buildTimeoutPaymentMeta(order, elapsedSeconds) {
   });
 }
 
+/**
+ * Cancels a single expired order within an existing database transaction connection.
+ * Reverts any applied customer balance back to their wallet before marking the order as cancelled.
+ *
+ * @param {import('mysql2/promise').PoolConnection} conn - Active MySQL transaction connection.
+ * @param {object} order - The order database record.
+ * @returns {Promise<{cancelled: boolean, elapsedSeconds: number}>}
+ */
 async function cancelExpiredOrderWithConnection(conn, order) {
   const elapsedSeconds = Number(order.elapsed_seconds || 0);
 
@@ -48,6 +74,13 @@ async function cancelExpiredOrderWithConnection(conn, order) {
   };
 }
 
+/**
+ * Executes a batch run to scan and cancel pending orders that exceeded the payment timeout limit.
+ * Employs row-level locking (SELECT ... FOR UPDATE) to avoid race conditions with concurrent payment webhooks.
+ *
+ * @returns {Promise<number>} Count of cancelled expired orders.
+ * @throws {Error} Rolls back transaction and rethrows if query fails.
+ */
 async function cancelExpiredOrdersBatch() {
   const conn = await pool.getConnection();
   let cancelledCount = 0;
