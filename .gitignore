@@ -44,3 +44,9 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
+
+# Local Development Plans & Progress (Do not push to remote)
+PLAN.md
+TODO_PLAN.md
+plans/
+
