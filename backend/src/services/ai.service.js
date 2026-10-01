@@ -1,14 +1,7 @@
 const axios = require('axios');
 const env = require('../config/env');
 
-/**
- * Xác thực nội dung đánh giá bằng AI qua OpenRouter
- * @param {string} comment - Nội dung đánh giá
- * @param {number} rating - Số sao đánh giá
- * @returns {Promise<{valid: boolean, reason: string}>}
- */
 async function validateReviewContent(comment, rating) {
-  // Nếu không có nội dung, mặc định là hợp lệ (chỉ có số sao)
   if (!comment || comment.trim().length === 0) {
     return { valid: true };
   }
@@ -199,19 +192,6 @@ function buildUserOrderContextText(orders = []) {
     .join('\n');
 }
 
-/**
- * Sinh phan hoi CSKH tu dong cho chat.
- * @param {{
- *   userMessage: string,
- *   systemPrompt?: string,
- *   trainingInstructions?: string,
- *   conversationHistory?: Array<{sender_role: string, content: string}>,
- *   productContext?: Array<{name?: string, tagline?: string, categoryName?: string, priceRange?: string, slug?: string}>,
- *   productKnowledgeContext?: Array<any>,
- *   userOrderContext?: Array<any>
- * }} input
- * @returns {Promise<string|null>}
- */
 async function generateCustomerSupportReply(input = {}) {
   const apiKey = env.openrouterApiKey || process.env.OPENROUTER_API_KEY;
   if (!apiKey) {
