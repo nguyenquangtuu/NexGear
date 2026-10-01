@@ -13,7 +13,7 @@ Giao diện Web Client cho nền tảng thương mại điện tử **NexGear** 
 * **Rich Text Editor**: [Tiptap Editor](https://tiptap.dev/) cho việc tạo nội dung Sản phẩm & Bài viết Blog.
 * **Realtime**: [Pusher JS](https://pusher.com/) cho Live Chat và Thông báo người dùng tức thì.
 * **Bảo mật & Tiện ích**: Cloudflare Turnstile CAPTCHA, React Hot Toast, ZXing Browser (Quét mã).
-* **SEO & Metadata**: Động theo từng trang, tự động sinh `sitemap.ts`, `robots.ts` và Schema Markup (JSON-LD).
+* **SEO & Metadata**: Động theo từng trang, tự động sinh `sitemap.ts`, `robots.ts` và SCHEMA Markup (JSON-LD).
 
 ---
 
