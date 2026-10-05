@@ -70,7 +70,7 @@ npm run build
 # Khởi chạy bản Production
 npm run start
 
-# Kiểm tra cú pháp mã nguồn
+# Kiểm tra cú pháp mã nguồn.
 npm run lint
 ```
 
