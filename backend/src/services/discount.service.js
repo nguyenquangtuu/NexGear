@@ -1,4 +1,5 @@
 const { normalizeDiscountCode } = require('../utils/order.util');
+const { PricingContext } = require('../patterns/strategy');
 
 async function checkDiscountEligibility(conn, payload) {
   const { code, userId, productId, categoryId, variantId, subtotal } = payload;
@@ -100,17 +101,12 @@ async function checkDiscountEligibility(conn, payload) {
     }
   }
 
-  let discountAmount = 0;
-  if (discount.discount_type === 'PERCENT') {
-    discountAmount = (Number(subtotal) * Number(discount.discount_value)) / 100;
-    if (Number(discount.max_discount_amount || 0) > 0) {
-      discountAmount = Math.min(discountAmount, Number(discount.max_discount_amount));
-    }
-  } else {
-    discountAmount = Number(discount.discount_value);
-  }
-
-  discountAmount = Math.max(0, Math.min(discountAmount, Number(subtotal)));
+  const pricingContext = PricingContext.fromDiscountType(discount.discount_type);
+  const discountAmount = pricingContext.calculateDiscount({
+    subtotal,
+    discountValue: discount.discount_value,
+    maxDiscountAmount: discount.max_discount_amount,
+  });
 
   return {
     valid: true,
